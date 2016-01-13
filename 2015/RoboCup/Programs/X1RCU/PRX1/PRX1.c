@@ -215,42 +215,55 @@ int main(void)
             {
                 if ( firval > birval )
                 {
-                    if (ballpos < 210&&ballpos > 150) {
-                    	traM(180,30,0);
+                    if (ballpos > 300&&ballpos>330) {
+                    	if(us[2]>us[3]) {
+                    		if (ballpos < 130) {
+                    			traM((ballpos+5*us[1]/150)%360,75,0);
+                    		}
+                    		else {
+                    			traM((ballpos%360),75,0);
+                    		}
+                    	}
+                    	else if (us[3] > us[2]) {
+                    		traM(220,50,0);
+                    	}
                     }
-                    else {
-                    	if (ballpos > 10&&ballpos<350){
-                    		if (ballpos> 180) {
-                    			traM(270,(359-ballpos)*1.2,0);
+                    else if (ballpos > 300&&ballpos<330) {
+                    	if(us[2]>us[3]) {
+                    		if (ballpos < 130) {
+                    			traM(((ballpos-5*us[1]/150)%360),75,0);
                     		}
-                    		else if(ballpos < 180) {
-                    			traM(90,ballpos*1.2,0);
+                    		else {
+                    			traM(ballpos%360,75,0);
                     		}
                     	}
-                    	else if (balldist<130) {
-                    		traM(0,(140-balldist)*1.2,0);
+                    	else if (us[3] > us[2]) {
+                    		traM(220,50,0);
                     	}
-                    	else if (balldist >=130) {
-                    		if (us[2]>60&&us[3]>60) {
-                    			if (us[2] < us[3] && (us[3]-us[2])>250) {
-                    				direction = 1;
-                    			}
-                    			else if (us[2] < us[3] && (us[3]-us[2])<=250) {
-                    				direction = 0;
-                    			}
-                    			else if (us[2] > us[3] && (us[2]-us[3])>250) {
-                    				direction = 0;
-                    			}
-                    			else if (us[2] > us[3] && (us[2]-us[3])<=250) {
-                    				direction = 1;
-                    			}
-                    			
-                    			if (direction == 0) {
-                    				traM(360-(20*us[1]/40),us[1]*85/140,0);
-                    			}
-                    			else if (direction == 1) {
-                    				traM(20*us[1]/40,us[1]*85/140,0);
-                    			}
+                    }
+                    else if (ballpos < 60&&ballpos<30) {
+                    	if(us[2]>us[3]) {
+                    		traM(100,50,0);
+                    	}
+                    	else if (us[3] > us[2]) {
+                    		if (ballpos < 130) {
+                    			traM((ballpos-5*us[1]/150)%360,75,0);
+                    		}
+                    		else {
+                    			traM((ballpos%360),75,0);
+                    		}
+                    	}
+                    }
+                    else if (ballpos < 60&&ballpos>30) {
+                    	if(us[2]>us[3]) {
+                    		traM(100,50,0);
+                    	}
+                    	else if (us[3] > us[2]) {
+                    		if (ballpos < 130) {
+                    			traM((ballpos+5*us[1]/150)%360,75,0);
+                    		}
+                    		else {
+                    			traM((ballpos%360),75,0);
                     		}
                     	}
                     }

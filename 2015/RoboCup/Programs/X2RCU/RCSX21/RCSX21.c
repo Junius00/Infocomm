@@ -91,7 +91,7 @@ int main(void)
     	}
     	
     	for (int i = 0;i < 4;i++) {
-    		if (i == 0||i==2||i==3)
+    		if (i == 1)
     		{
     			mtrP[i] = 0 - mtrP[i];
     		}
@@ -106,6 +106,14 @@ int main(void)
     		}
     	}
     	
+    	SetLCDBack(1);
+    
+    	for (int i = 0;i<4;i++)
+    	{
+    		SetLCD3Char(30,i*20,mtrP[i],YELLOW,BLACK);
+    	}
+    
+    
     	SetMotor( _MOTOR_ne_,mtrS[0],mtrP[0]);
     	SetMotor( _MOTOR_nw_,mtrS[1],mtrP[1]);
     	SetMotor( _MOTOR_se_,mtrS[2],mtrP[2]);
@@ -113,40 +121,6 @@ int main(void)
     	return;
     }
     
-    int ballSensing() {
-    	if(firval>birval)
-    	{
-    		apno=firno-1;
-    		cpno=firno+1;
-    		if(apno==0) apno=14;
-    		ballpos = (240 + 30*firno)%360;
-    		balldist = firval; 
-    	}
-    	else
-    	{
-    		apno=birno+6;
-    		cpno=birno+8;
-    		if(cpno==15) cpno=1;
-    		ballpos = (60 + 30*birno)%360;
-    		balldist = birval;
-    	}
-    	
-    	if (apno > 7) {
-    		apval = GetCompoI3( _COMPOUNDEYE3_b_,apno-7 );
-    	} else {
-    		apval = GetCompoI3( _COMPOUNDEYE3_f_,apno );
-    	}
-    	if (cpno > 7) {
-    		cpval = GetCompoI3( _COMPOUNDEYE3_b_,cpno-7 );
-    	} else {
-    		cpval = GetCompoI3( _COMPOUNDEYE3_f_,cpno );
-    	}
-    	cediff = (cpval - apval)/5;
-    	ballpos += cediff;
-    	
-    	if (ballpos < 0) ballpos += 360;
-    	return;
-    }
     while (1)
     {
         sl[0] = GetADScable10( _SCABLEAD_f_ );
@@ -210,7 +184,37 @@ int main(void)
         	SetLCD3Char(0,i*20,us[i],YELLOW,BLACK);
         }
         
-        ballSensing();
+        if(firval>birval)
+        {
+        	apno=firno-1;
+        	cpno=firno+1;
+        	if(apno==0) apno=14;
+        	ballpos = (240 + 30*firno)%360;
+        	balldist = firval; 
+        }
+        else
+        {
+        	apno=birno+6;
+        	cpno=birno+8;
+        	if(cpno==15) cpno=1;
+        	ballpos = (60 + 30*birno)%360;
+        	balldist = birval;
+        }
+        
+        if (apno > 7) {
+        	apval = GetCompoI3( _COMPOUNDEYE3_b_,apno-7 );
+        } else {
+        	apval = GetCompoI3( _COMPOUNDEYE3_f_,apno );
+        }
+        if (cpno > 7) {
+        	cpval = GetCompoI3( _COMPOUNDEYE3_b_,cpno-7 );
+        } else {
+        	cpval = GetCompoI3( _COMPOUNDEYE3_f_,cpno );
+        }
+        cediff = (cpval - apval)/5;
+        ballpos += cediff;
+        
+        if (ballpos < 0) ballpos += 360;
         
         SetLCD3Char(30,0,ballpos,YELLOW,BLACK);
         SetLCD3Char(30,20,firval,YELLOW,BLACK);
@@ -227,28 +231,77 @@ int main(void)
             {
                 if ( firval > birval )
                 {
-                    if (45 < ballpos&&ballpos < 315)
-                    {
+                    if (ballpos <=270&&ballpos>=90) {
                     	traM(180,30,0);
                     }
-                    if (ballpos < 180) {
-                    	BW = sqrt((us[2]+11.5)*(us[2]+11.5)+balldist*balldist-2*(us[2]+11.5)*balldist*cos(90+ballpos));
-                    	scoreangle = 90 - asin(balldist*sin(90+ballpos)/BW);
+                    else if (balldist < 30) {
+                    	valdiff = us[2] - us[3];
+                    	if (valdiff < 0) valdiff *= -1;
+                    	if (valdiff > 100) valdiff = 100;
+                    	if (valdiff > 19)
+                    	{
+                    		if (us[3] < us[2])
+                    		{
+                    			if (us[1]>10)
+                    			{
+                    				traM(225,valdiff/2,0);
+                    			}
+                    			else if (us[1]<5)
+                    			{
+                    				traM(315,valdiff/2,0);
+                    			}
+                    			else if (5<us[1]&&us[1]<10)
+                    			{
+                    				traM(270,valdiff/2,0);
+                    			}
+                    		}
+                    		else if (us[2] < us[3])
+                    		{
+                    			if (us[1]>10)
+                    			{
+                    				traM(135,valdiff/2,0);
+                    			}
+                    			else if (us[1]<5) 
+                    			{
+                    				traM(45,valdiff/2,0);
+                    			}
+                    			else if (5<us[1]&&us[1]<10)
+                    			{
+                    				traM(90,valdiff/2,0);
+                    			}
+                    		}
+                    	}
+                    	else
+                    	{
+                    		if (us[1] > 10) 
+                    		{
+                    			traM(180,(us[1]-15)/2,0);
+                    		}
+                    		else if (us[1] < 5)
+                    		{
+                    			traM(0,(10-us[1])*2,0);
+                    		}
+                    		else if (us[1] > 5||us[1] < 10)
+                    		{
+                    			traM(0,0,0);
+                    		}
+                    	}
+                    
                     }
-                    else {
-                    	temppos = 360-ballpos;
-                    	BW = sqrt((us[3]+11.5)*(us[3]+11.5)+balldist*balldist-2*(us[3]+11.5)*balldist*cos(90+temppos));
-                    	scoreangle = 90 - asin(balldist*sin(270+temppos)/BW);
+                    else if (balldist > 30&&balldist < 130) {
+                    	if (ballpos <355&&ballpos>5) {
+                    		if (ballpos > 180) {
+                    			traM(270,(359-ballpos)*2,0);
+                    		}
+                    		else {
+                    			traM(90,ballpos*2,0);
+                    		}
+                    	}
+                    }
+                    else if (balldist >= 130) {
+                    	traM(ballpos,40,0);
                     }
                     
-                    while (abs(ballpos-scoreangle)>3) {
-                    	traM(0,abs(ballpos-scoreangle)*1.5,0);
-                    	ballSensing();
-                    }
-                    
-                    if (abs(ballpos-scoreangle)<=3) {
-                    	traM(0,80,scoreangle);
-                    }
                 }
                 else
                 {
@@ -343,6 +396,6 @@ int main(void)
             }
         }
     }
-    return 1;
+    while(1);
 }
 

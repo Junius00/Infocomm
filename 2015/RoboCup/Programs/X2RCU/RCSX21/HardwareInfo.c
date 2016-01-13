@@ -25,11 +25,11 @@
 #ifndef _MOTOR_sw_
 #define _MOTOR_sw_ 135344
 #endif
-#ifndef _SCABLEAD_f_
-#define _SCABLEAD_f_ 384
-#endif
 #ifndef _SCABLEAD_r_
 #define _SCABLEAD_r_ 256
+#endif
+#ifndef _SCABLEAD_f_
+#define _SCABLEAD_f_ 384
 #endif
 #ifndef _SCABLEAD_b_
 #define _SCABLEAD_b_ 128
