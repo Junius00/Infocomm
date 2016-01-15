@@ -28,14 +28,14 @@
 #ifndef _SCABLEAD_f_
 #define _SCABLEAD_f_ 288
 #endif
-#ifndef _SCABLEAD_r_
-#define _SCABLEAD_r_ 416
-#endif
-#ifndef _SCABLEAD_b_
-#define _SCABLEAD_b_ 256
-#endif
 #ifndef _SCABLEAD_l_
 #define _SCABLEAD_l_ 384
+#endif
+#ifndef _SCABLEAD_b_
+#define _SCABLEAD_b_ 416
+#endif
+#ifndef _SCABLEAD_r_
+#define _SCABLEAD_r_ 256
 #endif
 #ifndef _COMPASS_1_
 #define _COMPASS_1_ 66304
