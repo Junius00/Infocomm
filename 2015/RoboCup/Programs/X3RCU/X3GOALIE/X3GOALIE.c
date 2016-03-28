@@ -62,7 +62,7 @@ int dist;
 
 int main(void)
 {
-    X3RCU_Init();
+    X2RCU_Init();
     int traM(int D,int S,int A) { 
     
     	mtrP[0] = mtrP[3] = vd[D][1]*S/100;
@@ -110,20 +110,25 @@ int main(void)
     	return;
     }
     
+    us[0] = 0;
+    us[1] = GetAdUltrasound( _ADULTRASOUND_b_)/10;
+    us[2] = GetAdUltrasound( _ADULTRASOUND_l_)/10;
+    us[3] = GetAdUltrasound( _ADULTRASOUND_r_)/10;
+    
     
     while (1)
     {
-        sl[0] = GetADScable10( _SCABLEAD_f_ );
+        sl[0] = 0;
         sl[1] = GetADScable10( _SCABLEAD_b_ );
         sl[2] = GetADScable10( _SCABLEAD_l_ );
         sl[3] = GetADScable10( _SCABLEAD_r_ );
         
-        nus[0] = GetAdUltrasound( _ADULTRASOUND_fus_)/10;
-        nus[1] = GetAdUltrasound( _ADULTRASOUND_bus_)/10;
-        nus[2] = GetAdUltrasound( _ADULTRASOUND_lus_)/10;
-        nus[3] = GetAdUltrasound( _ADULTRASOUND_rus_)/10;
+        nus[0] = 0;
+        nus[1] = GetAdUltrasound( _ADULTRASOUND_b_)/10;
+        nus[2] = GetAdUltrasound( _ADULTRASOUND_l_)/10;
+        nus[3] = GetAdUltrasound( _ADULTRASOUND_r_)/10;
         
-        usc = 30;
+        usc = 20;
         for (int i = 0;i < 4;i++)
         {
         	usd = nus[i] - us[i];
@@ -168,10 +173,13 @@ int main(void)
         }
         
         SetLCDBack(1);
-        for (int i = 0;i<4;i++)
-        {
-        	SetLCD3Char(0,i*2,us[i]);
+        for (int ab = 0;ab<4;ab++) {
+        	SetLCD3Char(0,ab*30 ,us[ab] ,YELLOW,BLACK);
         }
+        
+        SetLCD3Char(50,30 ,GetCompoI3(_COMPOUNDEYE3_f_,9),YELLOW,BLACK);
+        SetLCD3Char(50,60 ,birval,YELLOW,BLACK);
+        
         if(firval>birval)
         {
         	apno=firno-1;
@@ -203,103 +211,59 @@ int main(void)
         ballpos += cediff;
         
         if (ballpos < 0) ballpos += 360;
-        SetLCD3Char(30,0,ballpos);
-        SetLCD3Char(30,2,firval);
-        SetLCD3Char(30,4,birval);
-        SetLCD3Char(30,6,cmpr);
-        SetLCD3Char(60,0,firno);
-        SetLCD3Char(60,2,cpno);
-        SetLCD3Char(60,4,apno);
-        SetLCD3Char(60,6,birno);
         
-        if ( us[1]>30&&us[2]>30&&us[3]>30 )
+        if ( us[2]>57&&us[3]>57 )
         {
             if ( firval > 10||birval>10 )
             {
-                if ( firval > birval )
-                {
-                    if (us[2] > us[3]) {
-                    	curvelvl = us[2]/us[3]/4.5;
-                    }
-                    else {
-                    	curvelvl = us[3]/us[2]/4.5;
-                    }
-                    if (us[1] != 409) {
-                    	curve = 1.5*curvelvl*us[1]/100;
-                    }
-                    else {
-                    	curve = 1.5*curvelvl;
-                    }
-                    
-                    if (ballpos > 300&&ballpos>330) {
-                    	if(us[2]>us[3]) {
-                    		if (ballpos < 130) {
-                    			traM((ballpos+curve)%360,70,0);
-                    		}
-                    		else {
-                    			traM((ballpos%360),70,0);
-                    		}
-                    	}
-                    	else if (us[3] > us[2]) {
-                    		traM(220,50,0);
-                    	}
-                    }
-                    else if (ballpos > 300&&ballpos<330) {
-                    	if(us[2]>us[3]) {
-                    		if (ballpos < 130) {
-                    			traM(((ballpos+curve)%360),70,0);
-                    		}
-                    		else {
-                    			traM(ballpos%360,70,0);
-                    		}
-                    	}
-                    	else if (us[3] > us[2]) {
-                    		traM(220,50,0);
-                    	}
-                    }
-                    else if (ballpos < 60&&ballpos<30) {
-                    	if(us[2]>us[3]) {
-                    		traM(100,50,0);
-                    	}
-                    	else if (us[3] > us[2]) {
-                    		if (ballpos < 130) {
-                    			traM((ballpos-curve)%360,70,0);
-                    		}
-                    		else {
-                    			traM((ballpos%360),70,0);
-                    		}
-                    	}
-                    }
-                    else if (ballpos < 60&&ballpos>30) {
-                    	if(us[2]>us[3]) {
-                    		traM(100,50,0);
-                    	}
-                    	else if (us[3] > us[2]) {
-                    		if (ballpos < 130) {
-                    			traM((ballpos-curve)%360,70,0);
-                    		}
-                    		else {
-                    			traM((ballpos%360),70,0);
-                    		}
-                    	}
-                    }
+                int direction,speed;
+                
+                if (us[1] < 20) {
+                	if (balldist < 30) {
+                		if (us[2] > us[3]) {
+                			direction = 270;
+                			speed = us[2]-us[3]+15;
+                		}
+                		else {
+                			direction = 90;
+                			speed = us[3]-us[2]+15;
+                		}
+                	}
+                	else if (balldist > 30&&balldist < 100) {
+                		if (ballpos > 180) {
+                			direction = 270;
+                			speed = 359-ballpos+20;
+                		}
+                		else {
+                			direction = 90;
+                			speed = ballpos+20;
+                		}
+                	}
+                	else if (balldist >= 100) {
+                		direction = ballpos;
+                		speed = 60;
+                	}
                 }
-                else
-                {
-                    //AOG
-                    dist = 80;
-                    
-                    if (ballpos > 180)
-                    {
-                    	traD = 160 - balldist + dist;
-                    }
-                    else
-                    {
-                    	traD = 200 + balldist - dist;
-                    }
-                    
-                    traM(traD,50,0);
+                else if (us[1] > 20) {
+                	if (balldist >= 100) {
+                		direction = ballpos;
+                		speed = 60;
+                	}
+                	else if (balldist < 100) {
+                		if (ballpos > 180) {
+                			direction = 250;
+                			speed = (us[1]-20)*3+20;
+                		}
+                		else {
+                			direction = 110;
+                			speed = (us[1]-20)*3+20;
+                		}
+                	}
                 }
+                
+                if (speed > 80) {speed = 80;}
+                traM(direction,speed,0);
+                
             }
             else
             {
@@ -312,70 +276,65 @@ int main(void)
                 	traM(0,100,0);
                 }
                 
-                if (valdiff > 19)
+                if (valdiff > 5)
                 {
                 	if (us[3] < us[2])
                 	{
-                		if (us[1]>33)
+                		if (us[1]>18)
                 		{
-                			traM(225,valdiff/2,0);
+                			traM(225,valdiff/2+15,0);
                 		}
-                		else if (us[1]<27)
+                		else if (us[1]<20)
                 		{
-                			traM(315,valdiff/2,0);
+                			traM(315,valdiff/2+15,0);
                 		}
-                		else if (27<us[1]<33)
+                		else if (18<us[1]&&us[1]<20)
                 		{
-                			traM(270,valdiff/2,0);
+                			traM(270,valdiff/2+15,0);
                 		}
                 	}
                 	else if (us[2] < us[3])
                 	{
-                		if (us[1]>33)
+                		if (us[1]>18)
                 		{
-                			traM(135,valdiff/2,0);
+                			traM(135,valdiff/2+15,0);
                 		}
-                		else if (us[1]<27) 
+                		else if (us[1]<20) 
                 		{
-                			traM(45,valdiff/2,0);
+                			traM(45,valdiff/2+15,0);
                 		}
-                		else if (27<us[1]<33)
+                		else if (18<us[1]&&us[1]<20)
                 		{
-                			traM(90,valdiff/2,0);
+                			traM(90,valdiff/2+15,0);
                 		}
                 	}
                 }
                 else
                 {
-                	if (us[1] > 33) 
+                	if (us[1] > 20) 
                 	{
-                		traM(180,(us[1]-33)/2,0);
+                		traM(180,(us[1]-5)/2,0);
                 	}
-                	else if (us[1] < 27)
+                	else if (us[1] < 18)
                 	{
                 		traM(0,(27-us[1])*2,0);
                 	}
-                	else if (us[1] > 27||us[1] < 33)
+                	else if (us[1] > 18&&us[1] < 20)
                 	{
                 		traM(0,0,0);
                 	}
                 }
-                
             }
         }
         else
         {
-            if (us[1]<40)
+            if (us[2]<70)
             {
-            	traM(bcv[1],(50-us[1]),0);
+            	traM(bcv[2],50,0);
             }
-            else if (us[2]<40)
+            else if (us[3]<70)
             {
-            	traM(bcv[2],(50-us[2]),0);
-            }
-            else if (us[3]<40)
-            {
-            	traM(bcv[3],(50-us[3]),0);
+            	traM(bcv[3],50,0);
             }
         }
     }

@@ -123,15 +123,15 @@ int main(void)
     
     while (1)
     {
-        sl[0] = GetADScable10( _SCABLEAD_f_ );
+        //sl[0] = GetADScable10( _SCABLEAD_f_ );
         sl[1] = GetADScable10( _SCABLEAD_b_ );
         sl[2] = GetADScable10( _SCABLEAD_l_ );
         sl[3] = GetADScable10( _SCABLEAD_r_ );
         
         //nus[0] = GetAdUltrasound( _ADULTRASOUND_fus_)/10;
-        nus[1] = GetAdUltrasound( _ADULTRASOUND_bus_)/10;
-        nus[2] = GetAdUltrasound( _ADULTRASOUND_lus_)/10;
-        nus[3] = GetAdUltrasound( _ADULTRASOUND_rus_)/10;
+        nus[1] = GetAdUltrasound( _ADULTRASOUND_b_)/10;
+        nus[2] = GetAdUltrasound( _ADULTRASOUND_l_)/10;
+        nus[3] = GetAdUltrasound( _ADULTRASOUND_r_)/10;
         
         usc = 10;
         for (int i = 0;i < 4;i++)
@@ -225,164 +225,181 @@ int main(void)
         SetLCD3Char(60,40,apno,YELLOW,BLACK);
         SetLCD3Char(60,60,birno,YELLOW,BLACK);
         
-        if ( firval > 10||birval>10 )
+        if ( us[1]>30&&us[2]>30&&us[3]>30 )
         {
-            if ( firval > birval )
+            if ( firval > 10||birval>10 )
             {
-                if (ballpos <=270&&ballpos>=90) {
-                	traM(180,30,0);
-                }
-                else if (balldist < 30) {
-                	valdiff = us[2] - us[3];
-                	if (valdiff < 0) valdiff *= -1;
-                	if (valdiff > 100) valdiff = 100;
-                	if (valdiff > 19)
-                	{
-                		if (us[3] < us[2])
-                		{
-                			if (us[1]>10)
-                			{
-                				traM(225,valdiff/2,0);
-                			}
-                			else if (us[1]<5)
-                			{
-                				traM(315,valdiff/2,0);
-                			}
-                			else if (5<us[1]&&us[1]<10)
-                			{
-                				traM(270,valdiff/2,0);
-                			}
-                		}
-                		else if (us[2] < us[3])
-                		{
-                			if (us[1]>10)
-                			{
-                				traM(135,valdiff/2,0);
-                			}
-                			else if (us[1]<5) 
-                			{
-                				traM(45,valdiff/2,0);
-                			}
-                			else if (2<us[1]&&us[1]<10)
-                			{
-                				traM(90,valdiff/2,0);
-                			}
-                		}
-                	}
-                	else
-                	{
-                		if (us[1] > 5) 
-                		{
-                			traM(180,(us[1]-15)/2,0);
-                		}
-                		else if (us[1] < 2)
-                		{
-                			traM(0,(10-us[1])*2,0);
-                		}
-                		else if (us[1] > 2||us[1] < 5)
-                		{
-                			traM(0,0,0);
-                		}
-                	}
-                
-                }
-                else if (balldist > 30&&balldist < 135) {
-                	if (us[2] > 30 && us[3] > 30) {
-                		if (ballpos > 180) {
-                			traM(270,(359-ballpos)*1.4,0);
-                		}
-                		else {
-                		
-                			traM(90,ballpos*1.4,0);
-                		}
-                	}
-                	else if (us[2] < 30) {
-                		traM(90,30,0);
-                	}
-                	else if (us[3] < 30) {
-                		traM(270,30,0);
-                	}
-                }
-                else if (balldist >= 135) {
-                	traM(ballpos,40,0);
-                }
-                
-            }
-            else
-            {
-                //AOG
-                if (ballpos > 180)
+                if ( firval > birval )
                 {
-                	traD = 180 - balldist + 20;
+                    if (ballpos <=270&&ballpos>=90) {
+                    	traM(180,30,0);
+                    }
+                    else if (balldist < 30) {
+                    	valdiff = us[2] - us[3];
+                    	if (valdiff < 0) valdiff *= -1;
+                    	if (valdiff > 100) valdiff = 100;
+                    	if (valdiff > 19)
+                    	{
+                    		if (us[3] < us[2])
+                    		{
+                    			if (us[1]>10)
+                    			{
+                    				traM(225,valdiff/2,0);
+                    			}
+                    			else if (us[1]<5)
+                    			{
+                    				traM(315,valdiff/2,0);
+                    			}
+                    			else if (5<us[1]&&us[1]<10)
+                    			{
+                    				traM(270,valdiff/2,0);
+                    			}
+                    		}
+                    		else if (us[2] < us[3])
+                    		{
+                    			if (us[1]>10)
+                    			{
+                    				traM(135,valdiff/2,0);
+                    			}
+                    			else if (us[1]<5) 
+                    			{
+                    				traM(45,valdiff/2,0);
+                    			}
+                    			else if (2<us[1]&&us[1]<10)
+                    			{
+                    				traM(90,valdiff/2,0);
+                    			}
+                    		}
+                    	}
+                    	else
+                    	{
+                    		if (us[1] > 5) 
+                    		{
+                    			traM(180,(us[1]-15)/2,0);
+                    		}
+                    		else if (us[1] < 2)
+                    		{
+                    			traM(0,(10-us[1])*2,0);
+                    		}
+                    		else if (us[1] > 2||us[1] < 5)
+                    		{
+                    			traM(0,0,0);
+                    		}
+                    	}
+                    
+                    }
+                    else if (balldist > 30&&balldist < 100) {
+                    	if (us[2] > 30 && us[3] > 30) {
+                    		if (ballpos > 180) {
+                    			traM(270,(359-ballpos)*1.4,0);
+                    		}
+                    		else {
+                    		
+                    			traM(90,ballpos*1.4,0);
+                    		}
+                    	}
+                    	else if (us[2] < 30) {
+                    		traM(90,30,0);
+                    	}
+                    	else if (us[3] < 30) {
+                    		traM(270,30,0);
+                    	}
+                    }
+                    else if (balldist >= 100) {
+                    	traM(ballpos,40,0);
+                    }
+                    
                 }
                 else
                 {
-                	traD = 180 + balldist - 20;
+                    //AOG
+                    if (ballpos > 180)
+                    {
+                    	traD = 180 - balldist + 20;
+                    }
+                    else
+                    {
+                    	traD = 180 + balldist - 20;
+                    }
+                    
+                    traM(traD,60,0);
+                }
+            }
+            else
+            {
+                valdiff = us[2] - us[3];
+                if (valdiff < 0) valdiff *= -1;
+                if (valdiff > 100) valdiff = 100;
+                
+                if (cmpr < 357||cmpr > 3)
+                {
+                	traM(0,100,0);
                 }
                 
-                traM(traD,60,0);
+                if (valdiff > 19)
+                {
+                	if (us[3] < us[2])
+                	{
+                		if (us[1]>17)
+                		{
+                			traM(225,valdiff/2,0);
+                		}
+                		else if (us[1]<10)
+                		{
+                			traM(315,valdiff/2,0);
+                		}
+                		else if (10<us[1]<17)
+                		{
+                			traM(270,valdiff/2,0);
+                		}
+                	}
+                	else if (us[2] < us[3])
+                	{
+                		if (us[1]>17)
+                		{
+                			traM(135,valdiff/2,0);
+                		}
+                		else if (us[1]<10) 
+                		{
+                			traM(45,valdiff/2,0);
+                		}
+                		else if (10<us[1]<17)
+                		{
+                			traM(90,valdiff/2,0);
+                		}
+                	}
+                }
+                else
+                {
+                	if (us[1] > 17) 
+                	{
+                		traM(180,(us[1]-17)/2,0);
+                	}
+                	else if (us[1] < 10)
+                	{
+                		traM(0,(27-us[1])*2,0);
+                	}
+                	else if (us[1] > 10&&us[1] < 17)
+                	{
+                		traM(0,0,0);
+                	}
+                }
             }
         }
         else
         {
-            valdiff = us[2] - us[3];
-            if (valdiff < 0) valdiff *= -1;
-            if (valdiff > 100) valdiff = 100;
-            /*
-            if (cmpr < 357||cmpr > 3)
+            if (us[1]<40)
             {
-            	traM(0,100,0);
+            	traM(bcv[1],(50-us[1]),0);
             }
-            */
-            if (valdiff > 19)
+            else if (us[2]<40)
             {
-            	if (us[3] < us[2])
-            	{
-            		if (us[1]>30)
-            		{
-            			traM(225,valdiff/2,0);
-            		}
-            		else if (us[1]<27)
-            		{
-            			traM(315,valdiff/2,0);
-            		}
-            		else if (27<us[1]&&us[1]<33)
-            		{
-            			traM(270,valdiff/2,0);
-            		}
-            	}
-            	else if (us[2] < us[3])
-            	{
-            		if (us[1]>33)
-            		{
-            			traM(135,valdiff/2,0);
-            		}
-            		else if (us[1]<27) 
-            		{
-            			traM(45,valdiff/2,0);
-            		}
-            		else if (27<us[1]&&us[1]<33)
-            		{
-            			traM(90,valdiff/2,0);
-            		}
-            	}
+            	traM(bcv[2],(50-us[2]),0);
             }
-            else
+            else if (us[3]<40)
             {
-            	if (us[1] > 33) 
-            	{
-            		traM(180,(us[1]-33)/2,0);
-            	}
-            	else if (us[1] < 27)
-            	{
-            		traM(0,(27-us[1])*2,0);
-            	}
-            	else if (us[1] > 27||us[1] < 33)
-            	{
-            		traM(0,0,0);
-            	}
+            	traM(bcv[3],(50-us[3]),0);
             }
-            
         }
     }
     while(1);
